@@ -18,28 +18,42 @@ main :: proc() {
 
     projectiles : [dynamic]Projectile = {} //List to store active Projectiles
 
+    start_time := rl.GetTime()
+
     for !rl.WindowShouldClose() {
+        rl.SetTargetFPS(500)
         rl.BeginDrawing()
         rl.ClearBackground(rl.BLUE)
         rl.BeginMode2D(camera)
+
+
+
+        player_vel = rl.Vector2{0,0}
         
         // Movement
         if rl.IsKeyDown(.LEFT) || rl.IsKeyDown(.A){
             player_vel.x = -400
-        } else if rl.IsKeyDown(.RIGHT) || rl.IsKeyDown(.D){
+        }
+        if rl.IsKeyDown(.RIGHT) || rl.IsKeyDown(.D){
             player_vel.x = 400
-        }else if rl.IsKeyDown(.UP) || rl.IsKeyDown(.W){
+        }
+        if rl.IsKeyDown(.UP) || rl.IsKeyDown(.W){
             player_vel.y = -400
-        } else if rl.IsKeyDown(.DOWN) || rl.IsKeyDown(.S){
+        }
+        if rl.IsKeyDown(.DOWN) || rl.IsKeyDown(.S){
             player_vel.y = 400
-        } else {
-            player_vel = 0
         }
 
         if rl.IsKeyPressed(.SPACE) {
+            mouse_pos := rl.GetScreenToWorld2D(rl.GetMousePosition(), camera)
+            direction := rl.Vector2{
+                mouse_pos.x - player_pos.x,
+                mouse_pos.y - player_pos.y
+            }
+            direction = rl.Vector2Normalize(direction)
             projectile := Projectile {
-                pos = player_pos,
-                vel = rl.Vector2{0,-500},
+                pos = rl.Vector2{player_pos.x + 32, player_pos.y},
+                vel = rl.Vector2 {direction.x * 500, direction.y * 500},
             }
             append(&projectiles, projectile)
         }
@@ -48,10 +62,15 @@ main :: proc() {
             projectiles[i].pos += projectiles[i].vel * rl.GetFrameTime()
             rl.DrawCircleV(projectiles[i].pos, 8, rl.YELLOW)
         }
-
+ 
         camera.target = (rl.Vector2){player_pos.x + 20.0, player_pos.y + 20.0}
 
         player_pos += player_vel * rl.GetFrameTime()
+
+        // Calculate the Time
+        elapsed_time := rl.GetTime() - start_time
+        timer_text := rl.TextFormat("Time: %.2f Seconds", elapsed_time)
+        rl.DrawText(timer_text, 10, 10, 20, rl.WHITE)
 
         rl.DrawRectangleV(player_pos, {64,64}, rl.GREEN)
         rl.DrawRectangle(100,100,100,200,rl.RED)
