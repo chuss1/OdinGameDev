@@ -16,22 +16,37 @@ main :: proc() {
     camera.rotation = 0.0
     camera.zoom = 1.0
 
+    projectiles : [dynamic]Projectile = {} //List to store active Projectiles
+
     for !rl.WindowShouldClose() {
         rl.BeginDrawing()
         rl.ClearBackground(rl.BLUE)
         rl.BeginMode2D(camera)
         
         // Movement
-        if rl.IsKeyDown(.LEFT) {
+        if rl.IsKeyDown(.LEFT) || rl.IsKeyDown(.A){
             player_vel.x = -400
-        } else if rl.IsKeyDown(.RIGHT) {
+        } else if rl.IsKeyDown(.RIGHT) || rl.IsKeyDown(.D){
             player_vel.x = 400
-        }else if rl.IsKeyDown(.UP) {
+        }else if rl.IsKeyDown(.UP) || rl.IsKeyDown(.W){
             player_vel.y = -400
-        } else if rl.IsKeyDown(.DOWN) {
+        } else if rl.IsKeyDown(.DOWN) || rl.IsKeyDown(.S){
             player_vel.y = 400
         } else {
             player_vel = 0
+        }
+
+        if rl.IsKeyPressed(.SPACE) {
+            projectile := Projectile {
+                pos = player_pos,
+                vel = rl.Vector2{0,-500},
+            }
+            append(&projectiles, projectile)
+        }
+
+        for i := 0; i < len(projectiles); i += 1 {
+            projectiles[i].pos += projectiles[i].vel * rl.GetFrameTime()
+            rl.DrawCircleV(projectiles[i].pos, 8, rl.YELLOW)
         }
 
         camera.target = (rl.Vector2){player_pos.x + 20.0, player_pos.y + 20.0}
@@ -44,4 +59,9 @@ main :: proc() {
     }
 
     rl.CloseWindow()
+}
+
+Projectile :: struct {
+    pos : rl.Vector2,
+    vel : rl.Vector2
 }
