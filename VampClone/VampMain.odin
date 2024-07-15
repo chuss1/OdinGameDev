@@ -9,6 +9,7 @@ main :: proc() {
     rl.InitWindow(screenWidth, screenHeight, "Vampire Survivors Clone")
     player_pos := rl.Vector2{640,320}
     player_vel : rl.Vector2
+    player_speed : f32 = 200
 
     camera : rl.Camera2D
     camera.target = (rl.Vector2){player_pos.x + 20.0, player_pos.y + 20.0}
@@ -32,16 +33,16 @@ main :: proc() {
         
         // Movement
         if rl.IsKeyDown(.LEFT) || rl.IsKeyDown(.A){
-            player_vel.x = -400
+            player_vel.x = -player_speed
         }
         if rl.IsKeyDown(.RIGHT) || rl.IsKeyDown(.D){
-            player_vel.x = 400
+            player_vel.x = player_speed
         }
         if rl.IsKeyDown(.UP) || rl.IsKeyDown(.W){
-            player_vel.y = -400
+            player_vel.y = -player_speed
         }
         if rl.IsKeyDown(.DOWN) || rl.IsKeyDown(.S){
-            player_vel.y = 400
+            player_vel.y = player_speed
         }
 
         if rl.IsKeyPressed(.SPACE) {
