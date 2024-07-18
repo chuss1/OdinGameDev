@@ -1,7 +1,7 @@
 package game
 
 import rl "vendor:raylib"
-
+// This is a test
 main :: proc() {
 
     screenWidth : i32 : 1280
