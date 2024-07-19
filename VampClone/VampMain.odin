@@ -57,7 +57,7 @@ main :: proc() {
             }
             direction = rl.Vector2Normalize(direction)
             projectile := Object {
-                pos = rl.Vector2{player.pos.x + 32, player.pos.y},
+                pos = rl.Vector2{player.pos.x + player.size.x/2, player.pos.y},
                 vel = rl.Vector2 {direction.x * 500, direction.y * 500},
                 size = rl.Vector2 {8,8},
                 color = rl.YELLOW
