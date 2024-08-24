@@ -1,6 +1,7 @@
 package game
 
 import rl "vendor:raylib"
+import "core:fmt"
 
 main :: proc() {
     init_window()
@@ -17,6 +18,9 @@ main :: proc() {
 
     u_pos, u_size, u_color := unit_create(true, unit_type.default)
 
+    fmt.println(u_pos)
+    fmt.println(u_size)
+    fmt.println(u_color)
     //rl.DisableCursor()
     rl.SetTargetFPS(rl.GetMonitorRefreshRate(rl.GetCurrentMonitor()))
     rl.ToggleBorderlessWindowed()
@@ -60,17 +64,17 @@ unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type) -> (UNIT_POS : rl.V
 
     unit_health : f32
     unit_max_ap : i32
-    unit_positon : rl.Vector3
+    unit_position : rl.Vector3
     unit_size : rl.Vector3
     unit_color : rl.Color
 
     switch UNIT_TYPE {
         case .default :
             // Default unit type stuff here
-            unit_health := 5.0
-            unit_max_ap := 3
-            unit_positon := rl.Vector3{5.0, 5.0, 5.0}
-            unit_size := rl.Vector3{1.0, 1.0, 1.0}
+            unit_health = 5.0
+            unit_max_ap = 3
+            unit_position = rl.Vector3{5.0, 5.0, 5.0}
+            unit_size = rl.Vector3{1.0, 1.0, 1.0}
 
             if IS_FRIENDLY {
                 unit_color = rl.GREEN
@@ -85,7 +89,7 @@ unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type) -> (UNIT_POS : rl.V
   
     }
 
-    UNIT_POS = unit_positon
+    UNIT_POS = unit_position
     UNIT_SIZE = unit_size
     UNIT_COLOR = unit_color
     return UNIT_POS, UNIT_SIZE, UNIT_COLOR
