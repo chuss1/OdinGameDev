@@ -77,7 +77,7 @@ unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type) -> (UNIT_POS : rl.V
             unit_size = rl.Vector3{1.0, 1.0, 1.0}
 
             if IS_FRIENDLY {
-                unit_color = rl.GREEN
+                unit_color = rl.PURPLE
             } else {
                 unit_color = rl.GOLD
             }
