@@ -6,7 +6,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "odin build game.odin -file",
+            "command": "odin build .",
             "problemMatcher": "$msCompile",
             "group": {
                 "kind": "build",
