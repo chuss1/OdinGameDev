@@ -118,7 +118,7 @@ main :: proc() {
 
         draw_tools(true)
 
-
+        rl.GuiUnlock()
         rl.EndDrawing()
     }
 
@@ -193,7 +193,7 @@ Object :: struct {
 
 
 unit_type :: enum {
-    default,
-    heavy,
-    commander,
+    default = 0,
+    heavy = 1,
+    commander = 2,
 }
