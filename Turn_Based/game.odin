@@ -3,6 +3,10 @@ package game
 import rl "vendor:raylib"
 import "core:fmt"
 
+selectable_units : [dynamic]^Unit
+nonselectable_units : [dynamic]^Unit
+
+
 main :: proc() {
     init_window()
 
@@ -22,8 +26,7 @@ main :: proc() {
     ray := rl.Ray{}
     collision := rl.RayCollision{}
 
-    selectable_objects : [dynamic]^Object
-    append(&selectable_objects, new_unit, new_new_unit)
+    append(&selectable_units, new_unit, new_new_unit)
 
     
     //rl.DisableCursor()
@@ -42,20 +45,20 @@ main :: proc() {
             ray := rl.GetMouseRay(rl.GetMousePosition(), camera)
             selected_unit := false           
 
-            for obj in &selectable_objects {
+            for unit in &selectable_units {
             
                     collision = rl.GetRayCollisionBox(ray,
-                        (rl.BoundingBox){(rl.Vector3){obj.position.x - obj.size.x/2, obj.position.y - obj.size.y/2, obj.position.z - obj.size.z/2},
-                        (rl.Vector3){obj.position.x + obj.size.x/2, obj.position.y + obj.size.y/2, obj.position.z + obj.size.z/2}
+                        (rl.BoundingBox){(rl.Vector3){unit.obj.position.x - unit.obj.size.x/2, unit.obj.position.y - unit.obj.size.y/2, unit.obj.position.z - unit.obj.size.z/2},
+                        (rl.Vector3){unit.obj.position.x + unit.obj.size.x/2, unit.obj.position.y + unit.obj.size.y/2, unit.obj.position.z + unit.obj.size.z/2}
                     })
                 
                 if collision.hit {
-                    obj.selected = !obj.selected
+                    unit.obj.selected = !unit.obj.selected
 
-                    if obj.selected {
-                        for other_obj in &selectable_objects {
-                            if other_obj != obj {
-                                other_obj.selected = false
+                    if unit.obj.selected {
+                        for other_unit in &selectable_units {
+                            if other_unit != unit {
+                                other_unit.obj.selected = false
                             }
                         }
                     }
@@ -66,46 +69,21 @@ main :: proc() {
             }
 
             if !selected_unit {
-                for obj in &selectable_objects {
-                    obj.selected = false
+                for unit in &selectable_units {
+                    unit.obj.selected = false
                 }
             }
         }
 
-        for obj in &selectable_objects {
-            if obj.selected {
-                rl.DrawCubeV(obj.position, obj.size, rl.GREEN)
-            } else {
-                rl.DrawCubeV(obj.position, obj.size, obj.color)
+        for unit in &selectable_units {
+            if unit.is_friendly {
+                if unit.obj.selected {
+                    rl.DrawCubeV(unit.obj.position, unit.obj.size, rl.GREEN)
+                } else {
+                    rl.DrawCubeV(unit.obj.position, unit.obj.size, unit.obj.color)
+                }
             }
         }
-
-
-        // for obj in &selectable_objects {
-        //     if obj != nil {
-        //         rl.DrawCubeV(obj.position, obj.size, obj.color)
-    
-    
-        //         if rl.IsMouseButtonPressed(rl.MouseButton.LEFT) {
-        //             if !collision.hit {
-        //                 ray := rl.GetMouseRay(rl.GetMousePosition(), camera)
-        
-        //                 collision = rl.GetRayCollisionBox(ray,
-        //                     (rl.BoundingBox){(rl.Vector3){obj.position.x - obj.size.x/2, obj.position.y - obj.size.y/2, obj.position.z - obj.size.z/2},
-        //                     (rl.Vector3){obj.position.x + obj.size.x/2, obj.position.y + obj.size.y/2, obj.position.z + obj.size.z/2}})
-                        
-        //                 selected_unit = obj
-        //                 fmt.println(selected_unit)
-    
-        //             } else {
-        //                 collision.hit = false
-        //                 selected_unit = nil
-        //             }
-        //         }
-        //     }
-        // }
-
-
 
         rl.DrawCube(cube_position, 2.0, 2.0, 2.0, rl.RED)
         rl.DrawCubeWires(cube_position, 2.0, 2.0, 2.0, rl.MAROON)
@@ -136,8 +114,8 @@ init_window :: proc() {
 }
 
 
-unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type, SPAWN_POS: rl.Vector3) -> ^Object{
-    unit := new(Object)
+unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type, SPAWN_POS: rl.Vector3) -> ^Unit{
+    unit := new(Unit)
 
     unit_health : f32
     unit_max_ap : i32
@@ -176,10 +154,15 @@ unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type, SPAWN_POS: rl.Vecto
   
     }
 
-    unit.position = unit_position
-    unit.size = unit_size
-    unit.color = unit_color
-    unit.selected = false
+    unit.obj.position = unit_position
+    unit.obj.size = unit_size
+    unit.obj.color = unit_color
+    unit.obj.selected = false
+    unit.is_friendly = IS_FRIENDLY
+
+    if IS_FRIENDLY {
+        append(&selectable_units, unit)
+    }
 
     return unit
 }
@@ -189,6 +172,11 @@ Object :: struct {
     size : rl.Vector3,
     color : rl.Color,
     selected : bool
+}
+
+Unit :: struct {
+    obj : Object,
+    is_friendly : bool
 }
 
 
