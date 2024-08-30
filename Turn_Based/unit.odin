@@ -5,7 +5,8 @@ import rl "vendor:raylib"
 unit_type :: enum {
     default = 0,
     heavy = 1,
-    commander = 2,
+    medic = 2,
+    commander = 3,
 }
 
 Unit :: struct {
@@ -78,38 +79,31 @@ unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type, SPAWN_POS: rl.Vecto
             unit_max_ap = 3
             unit_position = SPAWN_POS
             unit_size = rl.Vector3{2.0, 4.0, 2.0}
-
-            if IS_FRIENDLY {
-                unit_color = rl.GRAY
-            } else {
-                unit_color = rl.DARKGRAY
-            }
-
+            unit_color = rl.GRAY
         case .heavy :
             // Heavy unit type stuff here
             unit_health = 5.0
             unit_max_ap = 3
             unit_position = SPAWN_POS
             unit_size = rl.Vector3{2.0, 4.0, 2.0}
-
-            if IS_FRIENDLY {
-                unit_color = rl.WHITE
-            } else {
-                unit_color = rl.BLACK
-            }
+            unit_color = rl.WHITE
+        case .medic :
+            unit_health = 5.0
+            unit_max_ap = 3
+            unit_position = SPAWN_POS
+            unit_size = rl.Vector3{2.0, 4.0, 2.0}
+            unit_color = rl.MAROON
         case .commander :
             // Commander unit type stuff here
             unit_health = 5.0
             unit_max_ap = 3
             unit_position = SPAWN_POS
             unit_size = rl.Vector3{2.0, 4.0, 2.0}
+            unit_color = rl.PINK
+    }
 
-            if IS_FRIENDLY {
-                unit_color = rl.PINK
-            } else {
-                unit_color = rl.PURPLE
-            }
-  
+    if !IS_FRIENDLY {
+        unit_color = rl.VIOLET
     }
 
     unit.obj.position = unit_position

@@ -82,7 +82,7 @@ draw_unit_create :: proc() {
     if rl.GuiValueBox((rl.Rectangle){192,168,24,24}, "Z: ", &value_z, 0, 100, value_z_edit) == 1{
         value_z_edit = !value_z_edit
     }
-    if rl.GuiDropdownBox((rl.Rectangle){96,216,120,24}, "Default;Heavy;Commander", &dropdown_value, dropdown_unit_type) {
+    if rl.GuiDropdownBox((rl.Rectangle){96,216,120,24}, "Default;Heavy;Medic;Commander", &dropdown_value, dropdown_unit_type) {
         dropdown_unit_type = !dropdown_unit_type
     }
     
