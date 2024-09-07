@@ -34,22 +34,6 @@ main :: proc() {
         
         rl.UpdateCamera(&camera, rl.CameraMode.FREE)
 
-        if rl.IsMouseButtonPressed(rl.MouseButton.LEFT) {
-            ray = rl.GetMouseRay(rl.GetMousePosition(), camera)
-
-            if selected_unit != nil {
-                //target_pos : rl.Vector3 = rl.GetRayCollisionBox(ray, )
-                //unit_move(selected_unit, )
-            }
-
-            unit_select(ray)
-        }
-
-        rl.DrawCubeV(rl.Vector3{0.0,-2.5,0.0}, rl.Vector3{20.0,1.0,20.0}, rl.BROWN)
-        rl.DrawCubeWiresV(rl.Vector3{0.0,-2.5,0.0}, rl.Vector3{20.0,1.0,20.0}, rl.DARKBROWN)
-        unit_draw()
-
-
         rl.EndMode3D()
         
         //UI
