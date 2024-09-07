@@ -1,6 +1,7 @@
 package game
 
 import rl "vendor:raylib"
+import "core:fmt"
 
 unit_type :: enum {
     default = 0,
@@ -15,7 +16,7 @@ Unit :: struct {
 }
 
 unit_select :: proc(ray: rl.Ray) {
-    selected_unit := false
+    is_unit_selected := false
 
     for unit in &selectable_units {
         collision = rl.GetRayCollisionBox(ray,
@@ -24,25 +25,44 @@ unit_select :: proc(ray: rl.Ray) {
         })
         
         if collision.hit {
+            selected_unit = unit
             unit.obj.selected = !unit.obj.selected
 
             if unit.obj.selected {
                 for other_unit in &selectable_units {
                     if other_unit != unit {
                         other_unit.obj.selected = false
+                        selected_unit = nil
                     }
                 }
             }
 
-            selected_unit = true
+            is_unit_selected = true
             break
         }
     }
 
-    if !selected_unit {
+    if !is_unit_selected {
         for unit in &selectable_units {
             unit.obj.selected = false
+            selected_unit = nil
         }
+    }
+}
+
+unit_move :: proc(selected_unit : ^Unit, target_pos : rl.Vector3) {
+    direction := rl.Vector3{selected_unit.obj.position.x - target_pos.x, 0, selected_unit.obj.position.z - target_pos.z}
+
+    distance : f32 = rl.Vector3Length(direction)
+
+    if distance > 0.1 {
+        direction = rl.Vector3Scale(rl.Vector3Normalize(direction), 5 * rl.GetFrameTime())
+
+        selected_unit.obj.position.x = lerp(selected_unit.obj.position.x, selected_unit.obj.position.x + direction.x, 0.1)
+        selected_unit.obj.position.y = 0
+        selected_unit.obj.position.z = lerp(selected_unit.obj.position.z, selected_unit.obj.position.z + direction.z, 0.1)
+    } else {
+        selected_unit.obj.position = target_pos
     }
 }
 

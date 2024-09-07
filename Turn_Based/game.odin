@@ -2,6 +2,8 @@ package game
 
 import rl "vendor:raylib"
 
+selected_unit : ^Unit
+
 selectable_units : [dynamic]^Unit
 nonselectable_units : [dynamic]^Unit
 
@@ -34,9 +36,17 @@ main :: proc() {
 
         if rl.IsMouseButtonPressed(rl.MouseButton.LEFT) {
             ray = rl.GetMouseRay(rl.GetMousePosition(), camera)
+
+            if selected_unit != nil {
+                //target_pos : rl.Vector3 = rl.GetRayCollisionBox(ray, )
+                //unit_move(selected_unit, )
+            }
+
             unit_select(ray)
         }
 
+        rl.DrawCubeV(rl.Vector3{0.0,-2.5,0.0}, rl.Vector3{20.0,1.0,20.0}, rl.BROWN)
+        rl.DrawCubeWiresV(rl.Vector3{0.0,-2.5,0.0}, rl.Vector3{20.0,1.0,20.0}, rl.DARKBROWN)
         unit_draw()
 
 
@@ -68,4 +78,8 @@ Object :: struct {
     size : rl.Vector3,
     color : rl.Color,
     selected : bool
+}
+
+lerp :: proc(a, b, t: f32) -> f32 {
+    return a + t * (b - a)
 }
