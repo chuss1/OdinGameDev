@@ -5,7 +5,7 @@
             "name": "Launch",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/game.exe",
+            "program": "${workspaceFolder}/Turn_Based.exe",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal"
