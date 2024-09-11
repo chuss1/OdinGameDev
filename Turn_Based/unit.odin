@@ -3,16 +3,16 @@ package game
 import rl "vendor:raylib"
 import "core:fmt"
 
+Unit :: struct {
+    obj : Object,
+    is_friendly : bool
+}
+
 unit_type :: enum {
     default = 0,
     heavy = 1,
     medic = 2,
     commander = 3,
-}
-
-Unit :: struct {
-    obj : Object,
-    is_friendly : bool
 }
 
 unit_select :: proc(ray: rl.Ray) {
@@ -50,8 +50,6 @@ unit_select :: proc(ray: rl.Ray) {
     }
 }
 
-
-
 unit_draw :: proc() {
     for unit in &selectable_units {
             if unit.is_friendly {
@@ -68,13 +66,12 @@ unit_draw :: proc() {
         }
 }
 
-
-unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type, SPAWN_POS: rl.Vector3) -> ^Unit{
+unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type, SPAWN_POS: grid_unit) -> ^Unit{
     unit := new(Unit)
 
     unit_health : f32
     unit_max_ap : i32
-    unit_position : rl.Vector3
+    unit_position : grid_unit
     unit_size : rl.Vector3
     unit_color : rl.Color
 
@@ -112,7 +109,7 @@ unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type, SPAWN_POS: rl.Vecto
         unit_color = rl.VIOLET
     }
 
-    unit.obj.position = unit_position
+    unit.obj.position = rl.Vector3{f32(unit_position.x), 2.0, f32(unit_position.z)}
     unit.obj.size = unit_size
     unit.obj.color = unit_color
     unit.obj.selected = false
@@ -123,6 +120,8 @@ unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type, SPAWN_POS: rl.Vecto
     } else {
         append(&nonselectable_units, unit)
     }
+
+    fmt.println(unit.obj.position)
 
     return unit
 }

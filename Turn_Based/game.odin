@@ -12,7 +12,7 @@ collision := rl.RayCollision{}
 
 
 main :: proc() {
-    window_init(1280, 720)
+    window_init(1920, 1080)
 
     camera := rl.Camera3D {
         position = rl.Vector3{10.0, 10.0, 10.0},
@@ -29,10 +29,13 @@ main :: proc() {
     for !rl.WindowShouldClose() {
         rl.BeginDrawing()
         rl.ClearBackground(rl.BLUE)
+        rl.UpdateCamera(&camera, rl.CameraMode.FREE)
 
         rl.BeginMode3D(camera)
+
+        grid_create(10,20)
         
-        rl.UpdateCamera(&camera, rl.CameraMode.FREE)
+        unit_draw()
 
         rl.EndMode3D()
         

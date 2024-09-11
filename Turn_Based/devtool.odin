@@ -73,13 +73,10 @@ draw_unit_create :: proc() {
 
     rl.GuiCheckBox((rl.Rectangle){96,120,24,24}, "IS_FRIENDLY", &checkbox_is_friendly)
     confirm_button = rl.GuiButton((rl.Rectangle){96,264,120,24}, "SPAWN UNIT")
-    if rl.GuiValueBox((rl.Rectangle){96,168,24,24}, "X: ", &value_x, 0, 100, value_x_edit) == 1{
+    if rl.GuiValueBox((rl.Rectangle){120,168,24,24}, "X: ", &value_x, 0, 100, value_x_edit) == 1{
         value_x_edit = !value_x_edit
     }
-    if rl.GuiValueBox((rl.Rectangle){144,168,24,24}, "Y: ", &value_y, 0, 100, value_y_edit) == 1{
-        value_y_edit = !value_y_edit
-    }
-    if rl.GuiValueBox((rl.Rectangle){192,168,24,24}, "Z: ", &value_z, 0, 100, value_z_edit) == 1{
+    if rl.GuiValueBox((rl.Rectangle){168,168,24,24}, "Z: ", &value_z, 0, 100, value_z_edit) == 1{
         value_z_edit = !value_z_edit
     }
     if rl.GuiDropdownBox((rl.Rectangle){96,216,120,24}, "Default;Heavy;Medic;Commander", &dropdown_value, dropdown_unit_type) {
@@ -88,12 +85,12 @@ draw_unit_create :: proc() {
     
     if confirm_button {
         //selected_unit_type : unit_type = dropdown_value
-        VALUE_X := cast(f32)value_x
-        VALUE_Y := cast(f32)value_y
-        VALUE_Z := cast(f32)value_z
+        VALUE_X := value_x
+        VALUE_Y := value_y
+        VALUE_Z := value_z
         DROPDOWN_VALUE := cast(unit_type)dropdown_value
 
-        unit_create(checkbox_is_friendly, DROPDOWN_VALUE, (rl.Vector3){VALUE_X, VALUE_Y, VALUE_Z})
+        unit_create(checkbox_is_friendly, DROPDOWN_VALUE, (grid_unit){int(VALUE_X), int(VALUE_Z)})
         reset_unit_create_var()
     }
 
