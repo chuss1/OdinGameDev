@@ -2,10 +2,12 @@ package game
 
 import rl "vendor:raylib"
 import "core:fmt"
+import "core:math"
 
 Unit :: struct {
     obj : Object,
-    is_friendly : bool
+    is_friendly : bool,
+    is_moving : bool
 }
 
 unit_type :: enum {
@@ -13,6 +15,18 @@ unit_type :: enum {
     heavy = 1,
     medic = 2,
     commander = 3,
+}
+
+unit_move :: proc(unit : ^Unit, target_pos : rl.Vector3) {
+    unit.obj.position.x = lerp(unit.obj.position.x, f32(target_pos.x), rl.GetFrameTime() * 2.0)
+    unit.obj.position.z = lerp(unit.obj.position.z, f32(target_pos.z), rl.GetFrameTime() * 2.0)
+
+    if math.abs(unit.obj.position.x - f32(target_pos.x)) < 0.01 {
+        if math.abs(unit.obj.position.z - f32(target_pos.z)) < 0.01 {
+            unit.obj.position.x = f32(target_pos.x)
+            unit.obj.position.z = f32(target_pos.z)
+        }
+    }
 }
 
 unit_select :: proc(ray: rl.Ray) {

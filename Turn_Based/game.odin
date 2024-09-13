@@ -31,6 +31,18 @@ main :: proc() {
         rl.ClearBackground(rl.BLUE)
         rl.UpdateCamera(&camera, rl.CameraMode.FREE)
 
+        if rl.IsMouseButtonPressed(rl.MouseButton.LEFT) {
+            mouse_pos := rl.GetMouseRay(rl.GetMousePosition(), camera)
+            planeNormal := rl.Vector3{0.0, 0.0, 0.0}
+            hitPoint := ray_intersect_plane(mouse_pos, 0.0)
+
+            if selected_unit != nil {
+                unit_move(selected_unit, hitPoint)
+            } else {
+                unit_select(mouse_pos)
+            }
+        }
+
         rl.BeginMode3D(camera)
 
         grid_create(10,20)
@@ -69,4 +81,13 @@ Object :: struct {
 
 lerp :: proc(a, b, t: f32) -> f32 {
     return a + t * (b - a)
+}
+
+ray_intersect_plane :: proc(ray : rl.Ray, plane : f32) -> rl.Vector3 {
+    ray_dir_y := ray.direction.y
+    ray_pos_y := ray.direction.y
+
+    t := (plane - ray_pos_y) / ray_dir_y
+
+    return rl.Vector3{ray.position.x + t * ray.direction.x, plane, ray.position.z + t * ray.direction.z}
 }
