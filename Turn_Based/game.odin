@@ -91,7 +91,7 @@ lerp :: proc(a, b, t: f32) -> f32 {
 
 ray_intersect_plane :: proc(ray : rl.Ray, plane : f32) -> rl.Vector3 {
     ray_dir_y := ray.direction.y
-    ray_pos_y := ray.direction.y
+    ray_pos_y := ray.position.y
 
     t := (plane - ray_pos_y) / ray_dir_y
 

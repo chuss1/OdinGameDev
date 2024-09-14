@@ -19,8 +19,8 @@ unit_type :: enum {
 }
 
 unit_move :: proc(unit : ^Unit, target_pos : rl.Vector3) {
-    target_x := (f32(math.round(f64((target_pos.x - grid_offset) / cell_size))) * cell_size) + grid_offset
-    target_z := (f32(math.round(f64((target_pos.z - grid_offset) / cell_size))) * cell_size) + grid_offset
+    target_x := (f32(math.round(f64((target_pos.x - grid_offset) / cell_size))) * cell_size)
+    target_z := (f32(math.round(f64((target_pos.z - grid_offset) / cell_size))) * cell_size)
 
 
     unit.target_pos = rl.Vector3{target_x, 2.0, target_z}
