@@ -54,6 +54,7 @@ main :: proc() {
         grid_create(10,20)
         
         unit_draw()
+        rl.DrawCubeV(rl.Vector3{20,-0.51,40}, rl.Vector3{50,1.0, 90}, rl.MAROON)
 
         rl.EndMode3D()
         
