@@ -6,6 +6,7 @@ import "core:math"
 
 Unit :: struct {
     obj : Object,
+    target_pos : rl.Vector3,
     is_friendly : bool,
     is_moving : bool
 }
@@ -18,13 +19,28 @@ unit_type :: enum {
 }
 
 unit_move :: proc(unit : ^Unit, target_pos : rl.Vector3) {
-    unit.obj.position.x = lerp(unit.obj.position.x, f32(target_pos.x), rl.GetFrameTime() * 2.0)
-    unit.obj.position.z = lerp(unit.obj.position.z, f32(target_pos.z), rl.GetFrameTime() * 2.0)
+    target_x := (f32(math.round(f64((target_pos.x - grid_offset) / cell_size))) * cell_size) + grid_offset
+    target_z := (f32(math.round(f64((target_pos.z - grid_offset) / cell_size))) * cell_size) + grid_offset
 
-    if math.abs(unit.obj.position.x - f32(target_pos.x)) < 0.01 {
-        if math.abs(unit.obj.position.z - f32(target_pos.z)) < 0.01 {
-            unit.obj.position.x = f32(target_pos.x)
-            unit.obj.position.z = f32(target_pos.z)
+
+    unit.target_pos = rl.Vector3{target_x, 2.0, target_z}
+    fmt.println(target_pos)
+    fmt.println(unit.target_pos)
+
+    unit.is_moving = true
+}
+
+update_unit_position :: proc(unit : ^Unit) {
+    if unit.is_moving {
+        unit.obj.position.x = lerp(unit.obj.position.x, f32(unit.target_pos.x), rl.GetFrameTime() * 2.0)
+        unit.obj.position.z = lerp(unit.obj.position.z, f32(unit.target_pos.z), rl.GetFrameTime() * 2.0)
+    
+        if math.abs(unit.obj.position.x - f32(unit.target_pos.x)) < 0.01 {
+            if math.abs(unit.obj.position.z - f32(unit.target_pos.z)) < 0.01 {
+                unit.obj.position.x = f32(unit.target_pos.x)
+                unit.obj.position.z = f32(unit.target_pos.z)
+                unit.is_moving = false
+            }
         }
     }
 }

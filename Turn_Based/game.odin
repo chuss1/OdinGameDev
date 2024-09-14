@@ -27,15 +27,13 @@ main :: proc() {
     
     //Update Loop
     for !rl.WindowShouldClose() {
-        rl.BeginDrawing()
-        rl.ClearBackground(rl.BLUE)
         rl.UpdateCamera(&camera, rl.CameraMode.FREE)
-
+        
         if rl.IsMouseButtonPressed(rl.MouseButton.LEFT) {
             mouse_pos := rl.GetMouseRay(rl.GetMousePosition(), camera)
             planeNormal := rl.Vector3{0.0, 0.0, 0.0}
             hitPoint := ray_intersect_plane(mouse_pos, 0.0)
-
+            
             if selected_unit != nil {
                 unit_move(selected_unit, hitPoint)
             } else {
@@ -43,8 +41,16 @@ main :: proc() {
             }
         }
 
-        rl.BeginMode3D(camera)
+        if selected_unit != nil {
+            update_unit_position(selected_unit)
+        }
 
+        
+        // Draw Game parts
+        rl.BeginDrawing()
+        rl.ClearBackground(rl.BLUE)
+        rl.BeginMode3D(camera)
+        
         grid_create(10,20)
         
         unit_draw()
