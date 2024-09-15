@@ -4,6 +4,7 @@ import rl "vendor:raylib"
 import "core:fmt"
 
 selected_unit : ^Unit
+is_unit_selected : bool = false
 
 selectable_units : [dynamic]^Unit
 nonselectable_units : [dynamic]^Unit
@@ -29,16 +30,23 @@ main :: proc() {
     //Update Loop
     for !rl.WindowShouldClose() {
         rl.UpdateCamera(&camera, rl.CameraMode.FREE)
-        
-        if rl.IsMouseButtonPressed(rl.MouseButton.LEFT) {
-            mouse_pos := rl.GetMouseRay(rl.GetMousePosition(), camera)
 
-            fmt.println(selected_unit)
-            
-            if selected_unit != nil {
-                unit_move(selected_unit, grid_mouse_click(mouse_pos))
-            } else {
+        if rl.IsKeyPressed(rl.KeyboardKey.P) {
+            rl.ToggleBorderlessWindowed()
+        }
+
+        if rl.IsMouseButtonPressed(rl.MouseButton.LEFT) {
+            if selected_unit == nil || !selected_unit.is_moving {
+                mouse_pos := rl.GetMouseRay(rl.GetMousePosition(), camera)
+    
                 unit_select(mouse_pos)
+    
+                fmt.println(is_unit_selected)
+                fmt.println(selected_unit)
+                
+                if selected_unit != nil && is_unit_selected {
+                    unit_move(selected_unit, grid_mouse_click(mouse_pos))
+                }
             }
         }
 

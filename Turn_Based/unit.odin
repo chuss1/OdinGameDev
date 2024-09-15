@@ -32,8 +32,8 @@ unit_move :: proc(unit : ^Unit, target_pos : rl.Vector3) {
 
 update_unit_position :: proc(unit : ^Unit) {
     if unit.is_moving {
-        unit.obj.position.x = lerp(unit.obj.position.x, f32(unit.target_pos.x), rl.GetFrameTime() * 2.0)
-        unit.obj.position.z = lerp(unit.obj.position.z, f32(unit.target_pos.z), rl.GetFrameTime() * 2.0)
+        unit.obj.position.x = lerp(unit.obj.position.x, f32(unit.target_pos.x), rl.GetFrameTime() * 3.0)
+        unit.obj.position.z = lerp(unit.obj.position.z, f32(unit.target_pos.z), rl.GetFrameTime() * 3.0)
     
         if math.abs(unit.obj.position.x - f32(unit.target_pos.x)) < 0.01 {
             if math.abs(unit.obj.position.z - f32(unit.target_pos.z)) < 0.01 {
@@ -46,7 +46,8 @@ update_unit_position :: proc(unit : ^Unit) {
 }
 
 unit_select :: proc(ray: rl.Ray) {
-    is_unit_selected := false
+    // selected_unit = nil
+    // is_unit_selected = false
 
     for unit in &selectable_units {
         collision = rl.GetRayCollisionBox(ray,
@@ -56,27 +57,25 @@ unit_select :: proc(ray: rl.Ray) {
         
         if collision.hit {
             selected_unit = unit
-            unit.obj.selected = !unit.obj.selected
-
-            if unit.obj.selected {
-                for other_unit in &selectable_units {
-                    if other_unit != unit {
-                        other_unit.obj.selected = false
-                        selected_unit = nil
-                    }
-                }
-            }
-
             is_unit_selected = true
             break
         }
     }
 
-    if !is_unit_selected {
+    if is_unit_selected {
+        for unit in &selectable_units {
+            if unit == selected_unit {
+                unit.obj.selected = true
+            } else {
+                unit.obj.selected = false
+            }
+        }
+    } else {
         for unit in &selectable_units {
             unit.obj.selected = false
-            selected_unit = nil
         }
+
+        selected_unit = nil
     }
 }
 
