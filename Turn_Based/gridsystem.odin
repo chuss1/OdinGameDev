@@ -2,38 +2,65 @@ package game
 
 import rl "vendor:raylib"
 import "core:math"
+import "core:fmt"
 
-cell_size : f32 = 4.0
 grid_offset : f32 = -2.0
+cell_size : f32 = 4.0
+grid_plane_size := rl.Vector2{3.75,3.75}
 
-grid_unit :: struct {
+GridSquare :: struct {
+    position : rl.Vector3,
+    size : rl.Vector2,
+    color : rl.Color
+}
+
+GridUnit :: struct {
     x : int,
     z : int
 }
 
+grid_create :: proc(row : int, col : int) {
+    all_grid_squares = make([]GridSquare, row * col)
 
-grid_create :: proc(grid_x : int, grid_y : int) {
-    for row := 0; row < grid_x; row += 1{
-        for col := 0; col < grid_y; col += 1 {
-            x := (f32(row) * cell_size) + grid_offset
-            z := (f32(col) * cell_size) + grid_offset
+    for i := 0; i < row; i += 1 {
+        for j := 0; j < col; j += 1 {
+            position := rl.Vector3{f32(i) * cell_size, 0.02, f32(j) * cell_size}
+            size := grid_plane_size
+            color := rl.DARKBLUE
+            
+            rl.DrawPlane(position, size, color)
 
-            startPos := rl.Vector3{x, 0.0, z}
-            endPosX := rl.Vector3{x + cell_size, 0.0, z}
-            endPosZ := rl.Vector3{x, 0.0, z + cell_size}
-
-            rl.DrawLine3D(startPos, endPosX, rl.DARKGRAY)
-            rl.DrawLine3D(startPos, endPosZ, rl.DARKGRAY)
+            all_grid_squares[i * col + j] = GridSquare{position, size, color}
         }
     }
 }
 
-vector_to_grid_unit :: proc(vector : rl.Vector3) -> grid_unit {
-    target_x := (f32(math.round(f64((vector.x - grid_offset) / cell_size))) * cell_size) + grid_offset
-    target_z := (f32(math.round(f64((vector.z - grid_offset) / cell_size))) * cell_size) + grid_offset
+grid_unit_to_square :: proc(target_square : GridUnit) -> rl.Vector3{
+    position := rl.Vector3{f32(target_square.x) * cell_size, 2.0, f32(target_square.z) * cell_size}
 
-    corrected_x : int =  int(target_x)
-    corrected_z : int = int(target_z)
+    return position
+}
 
-    return grid_unit{corrected_x, corrected_z}
+grid_mouse_click :: proc(ray : rl.Ray) -> rl.Vector3{
+    for square in all_grid_squares {
+        collision = rl.GetRayCollisionBox(ray, 
+            (rl.BoundingBox){(rl.Vector3){
+                square.position.x - square.size.x / 2.0, 
+                square.position.y,     
+                square.position.z - square.size.y / 2.0
+            }, (rl.Vector3){
+                square.position.x + square.size.x / 2.0,
+                square.position.y,
+                square.position.z + square.size.y / 2.0
+            }}
+        )
+
+        if collision.hit {
+            fmt.println(square.position)
+            return square.position
+        }
+    }
+
+    //If no grid was clicked on mouse
+    return rl.Vector3{-1.0,-1.0,-1.0}
 }

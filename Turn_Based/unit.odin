@@ -19,11 +19,11 @@ unit_type :: enum {
 }
 
 unit_move :: proc(unit : ^Unit, target_pos : rl.Vector3) {
-    target_x := (f32(math.round(f64((target_pos.x - grid_offset) / cell_size))) * cell_size)
-    target_z := (f32(math.round(f64((target_pos.z - grid_offset) / cell_size))) * cell_size)
-
-
-    unit.target_pos = rl.Vector3{target_x, 2.0, target_z}
+    if target_pos.x == -1.0 {
+        return
+    }
+    
+    unit.target_pos = rl.Vector3{target_pos.x, 2.0, target_pos.z}
     fmt.println(target_pos)
     fmt.println(unit.target_pos)
 
@@ -96,13 +96,13 @@ unit_draw :: proc() {
         }
 }
 
-unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type, SPAWN_POS: grid_unit) -> ^Unit{
+unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type, SPAWN_POS: GridUnit) -> ^Unit{
     unit := new(Unit)
 
     unit_health : f32
     unit_max_ap : i32
-    unit_position : grid_unit
-    unit_size : rl.Vector3
+    unit_position : GridUnit
+    unit_size := rl.Vector3{2.0, 4.0, 2.0}
     unit_color : rl.Color
 
     switch UNIT_TYPE {
@@ -111,27 +111,27 @@ unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type, SPAWN_POS: grid_uni
             unit_health = 5.0
             unit_max_ap = 3
             unit_position = SPAWN_POS
-            unit_size = rl.Vector3{2.0, 4.0, 2.0}
+            unit_size = unit_size
             unit_color = rl.GRAY
         case .heavy :
             // Heavy unit type stuff here
             unit_health = 5.0
             unit_max_ap = 3
             unit_position = SPAWN_POS
-            unit_size = rl.Vector3{2.0, 4.0, 2.0}
+            unit_size = unit_size
             unit_color = rl.WHITE
         case .medic :
             unit_health = 5.0
             unit_max_ap = 3
             unit_position = SPAWN_POS
-            unit_size = rl.Vector3{2.0, 4.0, 2.0}
+            unit_size = unit_size
             unit_color = rl.MAROON
         case .commander :
             // Commander unit type stuff here
             unit_health = 5.0
             unit_max_ap = 3
             unit_position = SPAWN_POS
-            unit_size = rl.Vector3{2.0, 4.0, 2.0}
+            unit_size = unit_size
             unit_color = rl.PINK
     }
 
@@ -139,7 +139,9 @@ unit_create :: proc(IS_FRIENDLY: bool, UNIT_TYPE: unit_type, SPAWN_POS: grid_uni
         unit_color = rl.VIOLET
     }
 
-    unit.obj.position = rl.Vector3{f32(unit_position.x), 2.0, f32(unit_position.z)}
+    grid_position := grid_unit_to_square(unit_position)
+
+    unit.obj.position = grid_position
     unit.obj.size = unit_size
     unit.obj.color = unit_color
     unit.obj.selected = false
